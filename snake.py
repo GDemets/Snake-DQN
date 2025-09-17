@@ -25,20 +25,23 @@ class SnakeEnv(gym.Env):
         self.action_space = gym.spaces.Discrete(4)  # action space: 4 directions
 
     def place_food(self, num_food=1):
+        empty_space = []
+        for i in range(len(self.state)):
+            for j in range(len(self.state[i])):
+                if self.state[i][j] == 0:
+                    empty_space.append([i, j])
+
         for i in range(num_food):
-            while True:
-                food = [
-                    random.randint(0, self.row - 1),
-                    random.randint(0, self.col - 1),
-                ]
-                if self.state[food[0], food[1]] == 0:
-                    self.food.append(food)
-                    self.state[food[0], food[1]] = 2
-                    break
+            if len(empty_space) == 0:
+                self.done = True
+                return
+            else:
+                food = random.choice(empty_space)
+                self.food.append(food)
+                self.state[food[0], food[1]] = 2
 
     def step(self, action):
         reward = -0.1
-        x, y = self.directions[action]
 
         ### check impossible movement ###
         if self.direction == 0 and action == 2:
@@ -50,6 +53,7 @@ class SnakeEnv(gym.Env):
         if self.direction == 3 and action == 1:
             action = self.direction
 
+        x, y = self.directions[action]
         new_head = [self.snake[0][0] + x, self.snake[0][1] + y]
 
         ### check collisions ###
