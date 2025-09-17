@@ -53,6 +53,7 @@ class SnakeEnv(gym.Env):
         if self.direction == 3 and action == 1:
             action = self.direction
 
+        ### get the new head psoition ###
         x, y = self.directions[action]
         new_head = [self.snake[0][0] + x, self.snake[0][1] + y]
 
@@ -107,7 +108,15 @@ class SnakeEnv(gym.Env):
         )  # return state, reward, done, info
 
     def render(self):
-        pass
+        print("Score : ", self.score)
+        for i in range(len(self.state)):
+            for j in range(len(self.stat[i])):
+                if self.state[i][j] == 0:
+                    print(".", end=" ")
+                elif self.state[i][j] == 1:
+                    print("S", end=" ")
+                elif self.state[i][j] == 2:
+                    print("F", end=" ")
 
     def reset(self):
         self.state = np.zeros((self.row, self.col))
