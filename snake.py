@@ -68,7 +68,7 @@ class SnakeEnv(gym.Env):
             or new_head[1] < 0
             or new_head[1] >= self.col
         ):  # check wall collision
-            reward -= 8
+            reward -= 10
             self.terminated = True
             return (
                 self.state.flatten(),
@@ -79,7 +79,7 @@ class SnakeEnv(gym.Env):
             )
 
         if new_head in self.snake:  # check self-collision
-            reward -= 1
+            reward -= 10
             self.terminated = True
             return (
                 self.state.flatten(),
@@ -93,7 +93,7 @@ class SnakeEnv(gym.Env):
             self.snake.insert(0, new_head)
             self.food.remove(new_head)
             self.score += 1
-            reward += 15
+            reward = reward + 15 + self.score
             self.place_food(1)  # place new food
         else:  # move forward
             self.snake.insert(0, new_head)  # add head at new position
@@ -109,7 +109,7 @@ class SnakeEnv(gym.Env):
         if new_distance < old_distance:
             reward += 0.1
         else:
-            reward -= 0.1
+            reward -= 0.05
 
         ### update state ###
         self.state = np.zeros((self.row, self.col))  # reset the field
@@ -142,8 +142,8 @@ class SnakeEnv(gym.Env):
 
     def reset(self):
         self.state = np.zeros((self.row, self.col))
-        self.snake = [[5, 5]]
-        self.state[5, 5] = 1
+        self.snake = [[2, 2]]
+        self.state[self.snake[0][0], self.snake[0][1]] = 1
         self.direction = 0
         self.score = 0
         self.alive = True
