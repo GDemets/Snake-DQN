@@ -1,15 +1,15 @@
 import random
 import numpy as np
 import gymnasium as gym
-from math import sqrt
+import math
 
 
 class SnakeEnv(gym.Env):
     def __init__(self):
-        self.row = 10
-        self.col = 10
+        self.row = 5
+        self.col = 5
         self.state = np.zeros((self.row, self.col))
-        self.snake = [[5, 5]]
+        self.snake = [[2, 2]]  # initial position of the snake
         self.state[self.snake[0][0], self.snake[0][1]] = 1
         self.score = 0
         self.directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
@@ -44,7 +44,7 @@ class SnakeEnv(gym.Env):
                 self.state[food[0], food[1]] = 2
 
     def step(self, action):
-        reward = 0
+        reward = 0.0
         old_head = self.snake[0]
 
         ### check impossible movement ###
@@ -68,7 +68,7 @@ class SnakeEnv(gym.Env):
             or new_head[1] < 0
             or new_head[1] >= self.col
         ):  # check wall collision
-            reward -= 10
+            reward -= 8
             self.terminated = True
             return (
                 self.state.flatten(),
@@ -79,7 +79,7 @@ class SnakeEnv(gym.Env):
             )
 
         if new_head in self.snake:  # check self-collision
-            reward -= 10
+            reward -= 1
             self.terminated = True
             return (
                 self.state.flatten(),
@@ -93,18 +93,18 @@ class SnakeEnv(gym.Env):
             self.snake.insert(0, new_head)
             self.food.remove(new_head)
             self.score += 1
-            reward += 20
+            reward += 15
             self.place_food(1)  # place new food
         else:  # move forward
             self.snake.insert(0, new_head)  # add head at new position
             self.snake.pop()  # remove the last one
 
         ### calculate reward ###
-        old_distance = sqrt(
-            (old_head[0] - self.food[0][0]) ** 2 + (old_head[1] - self.food[0][1]) ** 2
+        old_distance = abs(old_head[0] - self.food[0][0]) + abs(
+            old_head[1] - self.food[0][1]
         )
-        new_distance = sqrt(
-            (new_head[0] - self.food[0][0]) ** 2 + (new_head[1] - self.food[0][1]) ** 2
+        new_distance = abs(new_head[0] - self.food[0][0]) + abs(
+            new_head[1] - self.food[0][1]
         )
         if new_distance < old_distance:
             reward += 0.1
@@ -119,6 +119,7 @@ class SnakeEnv(gym.Env):
             self.state[fx, fy] = 2  # mark the food's position
 
         self.direction = action  # update the direction
+        # reward += 0.05  # small reward for staying alive
 
         return (
             self.state.flatten().astype(np.float32),
