@@ -107,9 +107,9 @@ class SnakeEnv(gym.Env):
             new_head[1] - self.food[0][1]
         )
         if new_distance < old_distance:
-            reward += 0.1
+            reward += 1
         else:
-            reward -= 0.05
+            reward -= 1
 
         ### update state ###
         self.state = np.zeros((self.row, self.col))  # reset the field
