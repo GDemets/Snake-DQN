@@ -19,6 +19,7 @@ class SnakeEnv(gym.Env):
         self.truncated = False  # If no more space to place food
         self.terminated = False  # False : snake alive / True : snake dead
         self.info = {}
+        self.steps = 0
 
         ### Gym setups ###
         self.observation_space = gym.spaces.Box(
@@ -81,6 +82,18 @@ class SnakeEnv(gym.Env):
         if new_head in self.snake:  # check self-collision
             reward -= 10
             self.terminated = True
+            return (
+                self.state.flatten(),
+                reward,
+                self.terminated,
+                self.truncated,
+                self.info,
+            )
+
+        self.steps += 1
+        if self.steps > 100:
+            self.truncated = True
+            reward -= 10
             return (
                 self.state.flatten(),
                 reward,
@@ -152,4 +165,5 @@ class SnakeEnv(gym.Env):
         self.truncated = False
         self.terminated = False
         self.info = {}
+        self.steps = 0
         return self.state.flatten().astype(np.float32), self.info
