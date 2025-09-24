@@ -6,10 +6,10 @@ import math
 
 class SnakeEnv(gym.Env):
     def __init__(self):
-        self.row = 5
-        self.col = 5
+        self.row = 10
+        self.col = 10
         self.state = np.zeros((self.row, self.col))
-        self.snake = [[2, 2]]  # initial position of the snake
+        self.snake = [[5, 5]]  # initial position of the snake
         self.state[self.snake[0][0], self.snake[0][1]] = 1
         self.score = 0
         self.directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]  # Up, Right, Down, Left
@@ -91,9 +91,9 @@ class SnakeEnv(gym.Env):
             )
 
         self.steps += 1
-        if self.steps > 100:
+        if self.steps > 200:
             self.truncated = True
-            reward -= 10
+            reward -= 5
             return (
                 self.state.flatten(),
                 reward,
@@ -106,8 +106,9 @@ class SnakeEnv(gym.Env):
             self.snake.insert(0, new_head)
             self.food.remove(new_head)
             self.score += 1
-            reward = reward + 15 + self.score
+            reward = 20
             self.place_food(1)  # place new food
+            self.steps = 0
         else:  # move forward
             self.snake.insert(0, new_head)  # add head at new position
             self.snake.pop()  # remove the last one
@@ -120,7 +121,7 @@ class SnakeEnv(gym.Env):
             new_head[1] - self.food[0][1]
         )
         if new_distance < old_distance:
-            reward += 1
+            reward += 2
         else:
             reward -= 1
 
@@ -155,7 +156,7 @@ class SnakeEnv(gym.Env):
 
     def reset(self):
         self.state = np.zeros((self.row, self.col))
-        self.snake = [[2, 2]]
+        self.snake = [[5, 5]]
         self.state[self.snake[0][0], self.snake[0][1]] = 1
         self.direction = 0
         self.score = 0
