@@ -133,7 +133,7 @@ class SnakeEnv(gym.Env):
             self.state[fx, fy] = 2  # mark the food's position
 
         self.direction = action  # update the direction
-        # reward += 0.05  # small reward for staying alive
+        reward -= 0.05  # small reward for staying alive
 
         return (
             self.state.flatten().astype(np.float32),
