@@ -22,9 +22,13 @@ class SnakeEnv(gym.Env):
         self.steps = 0
 
         ### Gym setups ###
+        # self.observation_space = gym.spaces.Box(
+        #     low=0, high=2, shape=(self.row * self.col,), dtype=np.float32
+        # )  # observation space : grid (row * col)
+
         self.observation_space = gym.spaces.Box(
-            low=0, high=2, shape=(self.row * self.col,), dtype=np.float32
-        )  # observation space : grid (row * col)
+            low=0, high=2, shape=(1, self.row, self.col), dtype=np.float32
+        )
 
         self.action_space = gym.spaces.Discrete(4)  # action space: 4 directions
 
@@ -62,6 +66,18 @@ class SnakeEnv(gym.Env):
         x, y = self.directions[action]
         new_head = [self.snake[0][0] + x, self.snake[0][1] + y]
 
+        ### calculate reward : distance to apple ###
+        old_distance = abs(old_head[0] - self.food[0][0]) + abs(
+            old_head[1] - self.food[0][1]
+        )
+        new_distance = abs(new_head[0] - self.food[0][0]) + abs(
+            new_head[1] - self.food[0][1]
+        )
+        if new_distance < old_distance:
+            reward += 0.1
+        else:
+            reward -= 0.2
+
         ### check collisions ###
         if (
             new_head[0] < 0
@@ -69,10 +85,11 @@ class SnakeEnv(gym.Env):
             or new_head[1] < 0
             or new_head[1] >= self.col
         ):  # check wall collision
-            reward -= 10
+            reward -= 50.0
             self.terminated = True
             return (
-                self.state.flatten(),
+                # self.state.flatten().astype(np.float32),
+                self.state[np.newaxis, :, :].astype(np.float32),
                 reward,
                 self.terminated,
                 self.truncated,
@@ -80,10 +97,11 @@ class SnakeEnv(gym.Env):
             )
 
         if new_head in self.snake:  # check self-collision
-            reward -= 10
+            reward -= 50.0
             self.terminated = True
             return (
-                self.state.flatten(),
+                # self.state.flatten().astype(np.float32),
+                self.state[np.newaxis, :, :].astype(np.float32),
                 reward,
                 self.terminated,
                 self.truncated,
@@ -91,11 +109,12 @@ class SnakeEnv(gym.Env):
             )
 
         self.steps += 1
-        if self.steps > 200:
+        if self.steps > 200:  # prevent infinite loops
             self.truncated = True
-            reward -= 5
+            reward -= 50.0
             return (
-                self.state.flatten(),
+                # self.state.flatten().astype(np.float32),
+                self.state[np.newaxis, :, :].astype(np.float32),
                 reward,
                 self.terminated,
                 self.truncated,
@@ -106,24 +125,12 @@ class SnakeEnv(gym.Env):
             self.snake.insert(0, new_head)
             self.food.remove(new_head)
             self.score += 1
-            reward = 20
+            reward = 15.0
             self.place_food(1)  # place new food
             self.steps = 0
         else:  # move forward
             self.snake.insert(0, new_head)  # add head at new position
             self.snake.pop()  # remove the last one
-
-        ### calculate reward ###
-        old_distance = abs(old_head[0] - self.food[0][0]) + abs(
-            old_head[1] - self.food[0][1]
-        )
-        new_distance = abs(new_head[0] - self.food[0][0]) + abs(
-            new_head[1] - self.food[0][1]
-        )
-        if new_distance < old_distance:
-            reward += 2
-        else:
-            reward -= 1
 
         ### update state ###
         self.state = np.zeros((self.row, self.col))  # reset the field
@@ -133,10 +140,11 @@ class SnakeEnv(gym.Env):
             self.state[fx, fy] = 2  # mark the food's position
 
         self.direction = action  # update the direction
-        reward -= 0.05  # small reward for staying alive
+        reward -= 0.01  # small reward for staying alive
 
         return (
-            self.state.flatten().astype(np.float32),
+            # self.state.flatten().astype(np.float32),
+            self.state[np.newaxis, :, :].astype(np.float32),
             reward,
             self.terminated,
             self.truncated,
@@ -167,4 +175,5 @@ class SnakeEnv(gym.Env):
         self.terminated = False
         self.info = {}
         self.steps = 0
-        return self.state.flatten().astype(np.float32), self.info
+        # return self.state.flatten().astype(np.float32), self.info
+        return self.state[np.newaxis, :, :].astype(np.float32), self.info
