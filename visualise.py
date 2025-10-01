@@ -10,8 +10,7 @@ RED = (255, 0, 0)
 WHITE = (255, 255, 255)
 
 ### Load trained model ###
-# model = DQN(n_observations=100, n_actions=4)
-model = DQN(n_actions=4)
+model = DQN(n_observations=100, n_actions=4)
 state_dict = torch.load("models/snake_dqntest.pth", map_location="cpu")
 model.load_state_dict(state_dict)
 model.eval()
