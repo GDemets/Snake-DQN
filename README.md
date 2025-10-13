@@ -8,8 +8,6 @@ Issue discovered during this project: sometimes, with my configuration, the agen
 
 ![Infinite Loop](img/Infinite_boucle.gif)  
 
-## Final Results
-
 ## Resources
 - [PyTorch RL Tutorial](https://docs.pytorch.org/tutorials/intermediate/reinforcement_q_learning.html)  
 - [PyTorch Advanced: Pendulum](https://docs.pytorch.org/tutorials/advanced/pendulum.html)  
