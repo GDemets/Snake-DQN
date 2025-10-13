@@ -3,8 +3,8 @@
 :warning: **WORK IN PROGRESS** :warning:
 
 ### Infinite Loop
-Another issue discovered during this project: sometimes, with my second configuration, the agent gets stuck in an infinite loop.  
-To avoid this behavior, we can add a condition that ends the game after 200 steps and penalizes the agent.  
+Issue discovered during this project: sometimes, with my configuration, the agent gets stuck in an infinite loop.  
+**Correction** : add a condition that ends the game after 200 steps and penalizes the agent.  
 
 ![Infinite Loop](img/Infinite_boucle.gif)  
 
