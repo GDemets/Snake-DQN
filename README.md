@@ -46,7 +46,7 @@ This will open a `pygame` window where you can see the agent playing the game.
 During development, an issue was discovered where the agent sometimes gets stuck in an infinite loop with a specific configuration. To mitigate this, a condition can be added to end the game after 200 steps and penalize the agent.
 
 ![Infinite Loop](img/Infinite_boucle.gif)
-*This section can also be updated with the results of your trained agent, such as the average score, the maximum score, and any interesting behaviors you observed.*
+
 ## Resources
 
 - [PyTorch RL Tutorial](https://docs.pytorch.org/tutorials/intermediate/reinforcement_q_learning.html)  
